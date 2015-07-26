@@ -1,0 +1,29 @@
+#!/bin/bash
+
+EXEC="lwip.exe"
+BIN="lwip.bin"
+MOUNT_POINT=""
+BUILD_DIR="o-optimize"
+
+if [ -d "/media/MBED" ]; then
+    MOUNT_POINT="/media/MBED"
+elif [ -d "/media/federico-casares/MBED" ]; then
+    MOUNT_POINT="/media/federico-casares/MBED"
+else
+    echo "!!!!!!!!!! Mount point not found"
+fi
+if [[ -z "$RTEMS_MAKEFILE_PATH" ]]; then
+    sh ./BuildRtems
+fi
+
+clear && \
+rm -Rf $BUILD_DIR && \
+make cleanall && \
+make copy && \
+make && \
+rm -f $MOUNT_POINT/$BIN && \
+sleep 2 && \
+cp $BUILD_DIR/$BIN $MOUNT_POINT/$BIN && \
+sleep 2 && \
+stat $MOUNT_POINT/$BIN && \
+arm-rtems4.11-size -A $BUILD_DIR/$EXEC

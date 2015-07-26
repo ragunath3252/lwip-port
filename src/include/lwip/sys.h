@@ -45,7 +45,9 @@ extern "C" {
 typedef u8_t sys_sem_t;
 typedef u8_t sys_mutex_t;
 typedef u8_t sys_mbox_t;
-
+typedef u8_t sys_prot_t;
+typedef u8_t sys_port_t;
+ 
 #define sys_sem_new(s, c) ERR_OK
 #define sys_sem_signal(s)
 #define sys_sem_wait(s)
