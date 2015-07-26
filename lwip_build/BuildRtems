@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-export PATH=/home/marcos/Desktop/Beagle/ins-gcc/bin:$PATH
-export RTEMS_MAKEFILE_PATH=/home/marcos/Desktop/Beagle/ins-rtems/arm-rtems4.11/beagleboneblack/
-# Debug mode. 0=>disable | 1=>enable
-export LWIP_DEBUG=0
-
-exec bash

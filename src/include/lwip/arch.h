@@ -29,8 +29,8 @@
  * Author: Adam Dunkels <adam@sics.se>
  *
  */
-#ifndef __LWIP_ARCH_H__
-#define __LWIP_ARCH_H__
+#ifndef LWIP_HDR_ARCH_H
+#define LWIP_HDR_ARCH_H
 
 #ifndef LITTLE_ENDIAN
 #define LITTLE_ENDIAN 1234
@@ -67,6 +67,18 @@ extern "C" {
 #ifndef PACK_STRUCT_FIELD
 #define PACK_STRUCT_FIELD(x) x
 #endif /* PACK_STRUCT_FIELD */
+
+/* Used for struct fields of u8_t,
+ * where some compilers warn that packing is not necessary */
+#ifndef PACK_STRUCT_FLD_8
+#define PACK_STRUCT_FLD_8(x) PACK_STRUCT_FIELD(x)
+#endif /* PACK_STRUCT_FLD_8 */
+
+/* Used for struct fields of that are packed structs themself,
+ * where some compilers warn that packing is not necessary */
+#ifndef PACK_STRUCT_FLD_S
+#define PACK_STRUCT_FLD_S(x) PACK_STRUCT_FIELD(x)
+#endif /* PACK_STRUCT_FLD_S */
 
 
 #ifndef LWIP_UNUSED_ARG
@@ -204,27 +216,6 @@ extern "C" {
 #define  ENOMEDIUM      123  /* No medium found */
 #define  EMEDIUMTYPE    124  /* Wrong medium type */
 
-
-#define ENSROK                    0 /* DNS server returned answer with no data */
-#define ENSRNODATA              160 /* DNS server returned answer with no data */
-#define ENSRFORMERR             161 /* DNS server claims query was misformatted */
-#define ENSRSERVFAIL            162 /* DNS server returned general failure */
-#define ENSRNOTFOUND            163 /* Domain name not found */
-#define ENSRNOTIMP              164 /* DNS server does not implement requested operation */
-#define ENSRREFUSED             165 /* DNS server refused query */
-#define ENSRBADQUERY            166 /* Misformatted DNS query */
-#define ENSRBADNAME             167 /* Misformatted domain name */
-#define ENSRBADFAMILY           168 /* Unsupported address family */
-#define ENSRBADRESP             169 /* Misformatted DNS reply */
-#define ENSRCONNREFUSED         170 /* Could not contact DNS servers */
-#define ENSRTIMEOUT             171 /* Timeout while contacting DNS servers */
-#define ENSROF                  172 /* End of file */
-#define ENSRFILE                173 /* Error reading file */
-#define ENSRNOMEM               174 /* Out of memory */
-#define ENSRDESTRUCTION         175 /* Application terminated lookup */
-#define ENSRQUERYDOMAINTOOLONG  176 /* Domain name is too long */
-#define ENSRCNAMELOOP           177 /* Domain name is too long */
-
 #ifndef errno
 extern int errno;
 #endif
@@ -235,4 +226,4 @@ extern int errno;
 }
 #endif
 
-#endif /* __LWIP_ARCH_H__ */
+#endif /* LWIP_HDR_ARCH_H */

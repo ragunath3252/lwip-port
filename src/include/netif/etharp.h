@@ -32,8 +32,8 @@
  *
  */
 
-#ifndef __NETIF_ETHARP_H__
-#define __NETIF_ETHARP_H__
+#ifndef LWIP_HDR_NETIF_ETHARP_H
+#define LWIP_HDR_NETIF_ETHARP_H
 
 #include "lwip/opt.h"
 
@@ -57,7 +57,7 @@ extern "C" {
 #endif
 PACK_STRUCT_BEGIN
 struct eth_addr {
-  PACK_STRUCT_FIELD(u8_t addr[ETHARP_HWADDR_LEN]);
+  PACK_STRUCT_FLD_8(u8_t addr[ETHARP_HWADDR_LEN]);
 } PACK_STRUCT_STRUCT;
 PACK_STRUCT_END
 #ifdef PACK_STRUCT_USE_INCLUDES
@@ -71,10 +71,10 @@ PACK_STRUCT_BEGIN
 /** Ethernet header */
 struct eth_hdr {
 #if ETH_PAD_SIZE
-  PACK_STRUCT_FIELD(u8_t padding[ETH_PAD_SIZE]);
+  PACK_STRUCT_FLD_8(u8_t padding[ETH_PAD_SIZE]);
 #endif
-  PACK_STRUCT_FIELD(struct eth_addr dest);
-  PACK_STRUCT_FIELD(struct eth_addr src);
+  PACK_STRUCT_FLD_S(struct eth_addr dest);
+  PACK_STRUCT_FLD_S(struct eth_addr src);
   PACK_STRUCT_FIELD(u16_t type);
 } PACK_STRUCT_STRUCT;
 PACK_STRUCT_END
@@ -115,13 +115,13 @@ PACK_STRUCT_BEGIN
 struct etharp_hdr {
   PACK_STRUCT_FIELD(u16_t hwtype);
   PACK_STRUCT_FIELD(u16_t proto);
-  PACK_STRUCT_FIELD(u8_t  hwlen);
-  PACK_STRUCT_FIELD(u8_t  protolen);
+  PACK_STRUCT_FLD_8(u8_t  hwlen);
+  PACK_STRUCT_FLD_8(u8_t  protolen);
   PACK_STRUCT_FIELD(u16_t opcode);
-  PACK_STRUCT_FIELD(struct eth_addr shwaddr);
-  PACK_STRUCT_FIELD(struct ip_addr2 sipaddr);
-  PACK_STRUCT_FIELD(struct eth_addr dhwaddr);
-  PACK_STRUCT_FIELD(struct ip_addr2 dipaddr);
+  PACK_STRUCT_FLD_S(struct eth_addr shwaddr);
+  PACK_STRUCT_FLD_S(struct ip_addr2 sipaddr);
+  PACK_STRUCT_FLD_S(struct eth_addr dhwaddr);
+  PACK_STRUCT_FLD_S(struct ip_addr2 dipaddr);
 } PACK_STRUCT_STRUCT;
 PACK_STRUCT_END
 #ifdef PACK_STRUCT_USE_INCLUDES
@@ -129,27 +129,34 @@ PACK_STRUCT_END
 #endif
 
 #define SIZEOF_ETHARP_HDR 28
-#define SIZEOF_ETHARP_PACKET (SIZEOF_ETH_HDR + SIZEOF_ETHARP_HDR)
 
-/** 5 seconds period */
-#define ARP_TMR_INTERVAL 5000
+#define SIZEOF_ETHARP_PACKET    (SIZEOF_ETH_HDR + SIZEOF_ETHARP_HDR)
+#if ETHARP_SUPPORT_VLAN && defined(LWIP_HOOK_VLAN_SET)
+#define SIZEOF_ETHARP_PACKET_TX (SIZEOF_ETHARP_PACKET + SIZEOF_VLAN_HDR)
+#else /* ETHARP_SUPPORT_VLAN && defined(LWIP_HOOK_VLAN_SET) */
+#define SIZEOF_ETHARP_PACKET_TX SIZEOF_ETHARP_PACKET
+#endif /* ETHARP_SUPPORT_VLAN && defined(LWIP_HOOK_VLAN_SET) */
+
+/** 1 seconds period */
+#define ARP_TMR_INTERVAL 1000
 
 #define ETHTYPE_ARP       0x0806U
 #define ETHTYPE_IP        0x0800U
 #define ETHTYPE_VLAN      0x8100U
+#define ETHTYPE_IPV6      0x86DDU
 #define ETHTYPE_PPPOEDISC 0x8863U  /* PPP Over Ethernet Discovery Stage */
 #define ETHTYPE_PPPOE     0x8864U  /* PPP Over Ethernet Session Stage */
 
 /** MEMCPY-like macro to copy to/from struct eth_addr's that are local variables
  * or known to be 32-bit aligned within the protocol header. */
 #ifndef ETHADDR32_COPY
-#define ETHADDR32_COPY(src, dst)  SMEMCPY(src, dst, ETHARP_HWADDR_LEN)
+#define ETHADDR32_COPY(dst, src)  SMEMCPY(dst, src, ETHARP_HWADDR_LEN)
 #endif
 
 /** MEMCPY-like macro to copy to/from struct eth_addr's that are no local
  * variables and known to be 16-bit aligned within the protocol header. */
 #ifndef ETHADDR16_COPY
-#define ETHADDR16_COPY(src, dst)  SMEMCPY(src, dst, ETHARP_HWADDR_LEN)
+#define ETHADDR16_COPY(dst, src)  SMEMCPY(dst, src, ETHARP_HWADDR_LEN)
 #endif
 
 #if LWIP_ARP /* don't build if not configured for use in lwipopts.h */
@@ -190,6 +197,7 @@ err_t etharp_request(struct netif *netif, ip_addr_t *ipaddr);
  *  nodes to update an entry in their ARP cache.
  *  From RFC 3220 "IP Mobility Support for IPv4" section 4.6. */
 #define etharp_gratuitous(netif) etharp_request((netif), &(netif)->ip_addr)
+void etharp_cleanup_netif(struct netif *netif);
 
 #if ETHARP_SUPPORT_STATIC_ENTRIES
 err_t etharp_add_static_entry(ip_addr_t *ipaddr, struct eth_addr *ethaddr);
@@ -218,4 +226,4 @@ extern const struct eth_addr ethbroadcast, ethzero;
 }
 #endif
 
-#endif /* __NETIF_ARP_H__ */
+#endif /* LWIP_HDR_NETIF_ARP_H */

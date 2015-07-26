@@ -29,8 +29,8 @@
  * Author: Adam Dunkels <adam@sics.se>
  *
  */
-#ifndef __LWIP_ERR_H__
-#define __LWIP_ERR_H__
+#ifndef LWIP_HDR_ERR_H
+#define LWIP_HDR_ERR_H
 
 #include "lwip/opt.h"
 #include "lwip/arch.h"
@@ -62,10 +62,12 @@ typedef s8_t err_t;
 
 #define ERR_IS_FATAL(e) ((e) < ERR_ISCONN)
 
-#define ERR_ABRT       -10   /* Connection aborted.      */
-#define ERR_RST        -11   /* Connection reset.        */
-#define ERR_CLSD       -12   /* Connection closed.       */
-#define ERR_CONN       -13   /* Not connected.           */
+#define ERR_CONN       -10   /* Not connected.           */
+#define ERR_IS_FATAL_LISTENCONNECT(e) ((e) < ERR_CONN)
+
+#define ERR_ABRT       -11   /* Connection aborted.      */
+#define ERR_RST        -12   /* Connection reset.        */
+#define ERR_CLSD       -13   /* Connection closed.       */
 
 #define ERR_ARG        -14   /* Illegal argument.        */
 
@@ -73,7 +75,7 @@ typedef s8_t err_t;
 
 
 #ifdef LWIP_DEBUG
-const char *lwip_strerr(err_t err);
+extern const char *lwip_strerr(err_t err);
 #else
 #define lwip_strerr(x) ""
 #endif /* LWIP_DEBUG */
@@ -82,4 +84,4 @@ const char *lwip_strerr(err_t err);
 }
 #endif
 
-#endif /* __LWIP_ERR_H__ */
+#endif /* LWIP_HDR_ERR_H */
